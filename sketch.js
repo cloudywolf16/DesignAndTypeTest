@@ -8,20 +8,23 @@
 //   World = Matter.World;
 
 const { Engine, Render, Runner, World, Body, Bodies, Mouse, MouseConstraint, Constraint, Composite, Composites } = Matter;
+
 let world;
 let runner;
 
 const canvasHeight = 720;
 
+let container;
 let colorPicker1;
 let colorPicker2;
 let colorPicker3;
 let canvasColorPicker;
 let cradleHeightSlider;
+let gravityScaleSlider;
 let ballSizeSlider;
 let ballColorCheckBox;
 let constraintsCheckBox;
-let input1;
+let textInput;
 
 let font;
 let texts;
@@ -40,9 +43,7 @@ let constraints = [];
 let ellipseSize = 25;
 let mouse;
 
-let capturer = new CCapture({
-  framerate: 60, format: 'gif', workersPath: 'lib/'
-});
+let capturer;
 let isCaptureCanvas = false;
 
 function preload() {
@@ -51,7 +52,11 @@ function preload() {
 
 function setup() {
 
+  capturer = null;
+
   createCanvas(windowWidth, canvasHeight);
+  frameRate(120);
+  container = select('#defaultCanvas0');
 
   //--SETUP-DESIGN-OPTIONS----------------------------
   let toolContainer = createDiv().id("div-settings");
@@ -74,7 +79,6 @@ function setup() {
   createP("Text Size").parent(divRow2);
   textSizeSlider = createSlider(20, 90, 40, 1).parent(divRow2);
   textSizeSlider.style('width', '100px');
-  textSizeSlider.input(updateCradle);
   createP("Ball Size").parent(divRow2);
   ballSizeSlider = createSlider(10, 90, 40, 1).parent(divRow2);
   ballSizeSlider.style('width', '100px');
@@ -83,27 +87,31 @@ function setup() {
   cradleHeightSlider = createSlider(0, 250, 210, 1).parent(divRow2);
   cradleHeightSlider.style('width', '100px');
   cradleHeightSlider.input(updateCradle);
+  createP("Gravity Scale").parent(divRow2);
+  gravityScaleSlider = createSlider(0, 0.001, 0.001, 0.0001).parent(divRow2);
+  gravityScaleSlider.style('width', '100px');
+  gravityScaleSlider.input(setGravityScale);
 
 
   //--SETUP-INPUT---------------------------------------  
   let divRow3 = createDiv().id("div-row3");
   divRow3.parent(toolContainer);
-  input1 = createInput('Inertia').parent(divRow3);
-  input1.style('height', '25px');
-  input1.input(input1Event);
+  textInput = createInput('Inertia').parent(divRow3);
+  textInput.style('height', '25px');
+  textInput.input(textInputEvent);
 
   let saveBtn = createButton("Save as Gif").parent(divRow3);
   saveBtn.style("margin", "10px");
   saveBtn.mousePressed(captureCanvas);
 
-  texts = input1.value();
+  texts = textInput.value();
 
   setupMatterWorld();
 
   visualizeCradle();
 }
 
-async function setupMatterWorld() {
+function setupMatterWorld() {
 
   //--MATTER-SETUP------------------------------------
   engine = Engine.create();
@@ -130,17 +138,20 @@ async function setupMatterWorld() {
   //--RUN-ENGINE-------------------------------------------------
   runner = Engine.run(engine);
 
-  //--CREATE-MATTER-TO-P5-VISUAL------------------------------------
+  //--WORLD-&-ENGINE-SETTINGS-----------------------------------
+
 }
 
+function setGravityScale() {
+  world.gravity.scale = gravityScaleSlider.value();
+}
 
 function createCradle(world) {
   chars = texts.split("");
   cradleCount = chars.length;
 
-  let nCradleY = (width - ((ballSizeSlider.value() * 1.75) * cradleCount)) / 2;
-  console.log(808 / 2);
-  cradle = Composites.newtonsCradle(nCradleY, canvasHeight / 3, cradleCount, ballSizeSlider.value(), cradleHeightSlider.value());
+  const nCradleX = (width - ((ballSizeSlider.value() * 1.75) * cradleCount)) / 2;
+  cradle = Composites.newtonsCradle(nCradleX, canvasHeight / 2.5, cradleCount, ballSizeSlider.value(), cradleHeightSlider.value());
   World.add(world, cradle);
   Body.translate(cradle.bodies[0], { x: -(cradleHeightSlider.value()), y: -(cradleHeightSlider.value() + 10) });
 }
@@ -152,16 +163,15 @@ function visualizeCradle() {
     constraints.push(new Constraints(cradle.constraints[i].pointA.x, cradle.constraints[i].pointA.y,
       cradle.bodies[i].position.x, cradle.bodies[i].position.y));
     ellipses.push(new Ellipse(cradle.bodies[i].position.x, cradle.bodies[i].position.y, chars[i]));
-    //console.log(cradle.bodies[i].position.x, cradle.bodies[i].position.y);
   }
 }
 
-async function updateCradle() {
+function updateCradle() {
   if (timerId != null || timerId != undefined) {
     clearTimeout(timerId);
   }
   timerId = setTimeout(
-    async function () {
+    function () {
       Runner.stop(runner);
       World.remove(world, cradle);
       createCradle(world);
@@ -173,10 +183,12 @@ async function updateCradle() {
 
 }
 
-function input1Event() {
+
+
+function textInputEvent() {
   //console.log(ellipses.length,constraints.length);
-  if (input1.value().length > 0) {
-    texts = input1.value();
+  if (textInput.value().length > 0) {
+    texts = textInput.value();
     updateCradle();
   }
   else {
@@ -206,23 +218,42 @@ function draw() {
   }
   drawMouse(mouseConstraint);
 
-  if (isCaptureCanvas == true) {
-    capturer.capture(document.getElementById("defaultCanvas0"));
+  if (capturer && isCaptureCanvas == true) {
+    capturer.capture(container.elt);
   }
 }
 
 function captureCanvas() {
 
   isCaptureCanvas = true;
-  console.log(capturer.start());
+  capturer = new CCapture({
+    framerate: 120,
+    verbose: false, 
+    format: 'gif',
+    workersPath: 'lib/',
+    framerate: 0,
+    autoSaveTime: 0,
+    timeLimit: 30,
+  })
+  capturer.start();
   console.log("Recording started");
   setTimeout(function () {
     console.log("Recording stopped!");
     capturer.stop();
-    capturer.save();
+    saveCapture().then((output)=>{alert("puta"+output)});
     isCaptureCanvas = false;
     //loop();
-  }, 15000);
+  }, 5000);
+}
+
+
+function saveCapture() {
+  const save = (new Promise(()=>{ 
+    const saveData = capturer.save();
+    return saveData;})
+  .then((res)=>{alert("saved"+res)}));
+
+  return save.then((output) => alert("success"+output));
 }
 
 function drawMouse(mouseConstraint) {
@@ -256,7 +287,6 @@ class Constraints {
       line(this.constraintPosition.x, this.constraintPosition.y, this.ellipsePosition.x, this.ellipsePosition.y);
     }
   }
-
 }
 
 
