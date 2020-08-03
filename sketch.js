@@ -14,21 +14,26 @@ let runner;
 
 const canvasHeight = 720;
 
-let container;
-let colorPicker1;
-let colorPicker2;
-let colorPicker3;
-let canvasColorPicker;
-let cradleHeightSlider;
-let gravityScaleSlider;
-let ballSizeSlider;
-let ballColorCheckBox;
-let constraintsCheckBox;
-let textInput;
+let container,
+  colorPicker1,
+  colorPicker2,
+  colorPicker3,
+  canvasColorPicker,
+  cradleHeightSlider,
+  gravityScaleSlider,
+  ballSizeSlider,
+  ballColorCheckBox,
+  constraintsCheckBox,
+  textInput,
+  fontSelector;
 
-let font;
+
 let texts;
 let chars;
+let dancingScriptFont,
+  codystarFont,
+  ubuntuBoldFont;
+let font;
 
 let engine
 let cradle;
@@ -36,7 +41,7 @@ let cradleCount;
 
 
 let timerId;
-//-ELLIPSE-PROPERTIES-------------------------------
+
 let ellipses = [];
 let constraints = [];
 
@@ -47,7 +52,10 @@ let capturer;
 let isCaptureCanvas = false;
 
 function preload() {
-  //font = loadFont("");
+  dancingScriptFont = loadFont("fonts/DancingScript.ttf");
+  codystarFont = loadFont("fonts/Codystar.ttf");
+  ubuntuBoldFont = loadFont("fonts/UbuntuBold.ttf");
+  font = ubuntuBoldFont;
 }
 
 function setup() {
@@ -63,7 +71,16 @@ function setup() {
   let divRow1 = createDiv().id("div-row1");
   divRow1.parent(toolContainer);
 
-  createP('Ball').parent(divRow1);
+
+  fontSelector = createSelect().parent(divRow1);
+  fontSelector.option("Ubuntu Bold");
+  fontSelector.option("DancingScript");
+  fontSelector.option("Codystar");
+  fontSelector.selected(0);
+  fontSelector.changed(fontSelectEvent);
+
+
+  createP('Ball').parent(divRow1).style("margin-left","25px");
   colorPicker1 = createColorPicker('#E0F1FF').parent(divRow1);
   createP('Text').parent(divRow1).style("margin-left", "25px");
   colorPicker2 = createColorPicker('#404040').parent(divRow1);
@@ -99,6 +116,9 @@ function setup() {
   textInput = createInput('Inertia').parent(divRow3);
   textInput.style('height', '25px');
   textInput.input(textInputEvent);
+
+
+
 
   let saveBtn = createButton("Save as Gif").parent(divRow3);
   saveBtn.style("margin", "10px");
@@ -183,7 +203,18 @@ function updateCradle() {
 
 }
 
-
+function fontSelectEvent() {
+  let item = fontSelector.value();
+  if(item=="DancingScript"){
+    font = dancingScriptFont;
+  }
+  else if(item=="Codystar"){
+    font = codystarFont;
+  }
+  else if(item=="Ubuntu Bold"){
+    font = ubuntuBoldFont;
+  }
+}
 
 function textInputEvent() {
   //console.log(ellipses.length,constraints.length);
@@ -228,7 +259,7 @@ function captureCanvas() {
   isCaptureCanvas = true;
   capturer = new CCapture({
     framerate: 120,
-    verbose: false, 
+    verbose: false,
     format: 'gif',
     workersPath: 'lib/',
     framerate: 0,
@@ -240,7 +271,7 @@ function captureCanvas() {
   setTimeout(function () {
     console.log("Recording stopped!");
     capturer.stop();
-    saveCapture().then((output)=>{alert("puta"+output)});
+    saveCapture().then((output) => { alert("puta" + output) });
     isCaptureCanvas = false;
     //loop();
   }, 5000);
@@ -248,12 +279,13 @@ function captureCanvas() {
 
 
 function saveCapture() {
-  const save = (new Promise(()=>{ 
+  const save = (new Promise(() => {
     const saveData = capturer.save();
-    return saveData;})
-  .then((res)=>{alert("saved"+res)}));
+    return saveData;
+  })
+    .then((res) => { alert("saved" + res) }));
 
-  return save.then((output) => alert("success"+output));
+  return save.then((output) => alert("success" + output));
 }
 
 function drawMouse(mouseConstraint) {
@@ -281,6 +313,7 @@ class Constraints {
     if (constraintsCheckBox.checked()) {
       noStroke();
       textSize(25);
+      textFont(font);
       fill("#98B0AF");
       ellipse(this.constraintPosition.x, this.constraintPosition.y, 15);
       stroke("white");
