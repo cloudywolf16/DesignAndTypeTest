@@ -26,7 +26,8 @@ let container,
   ballColorCheckBox,
   constraintsCheckBox,
   textInput,
-  fontSelector;
+  fontSelector,
+  saveBtn;
 
 
 let texts;
@@ -42,17 +43,16 @@ let cradleCount;
 
 
 let timerId;
+let progress_;
 
 let ellipses = [];
 let constraints = [];
 
-let ellipseSize = 25;
 let mouse;
 
 let capturer;
 let isCaptureCanvas = false;
 
-let imageTest;
 
 function preload() {
   dancingScriptFont = loadFont("../fonts/DancingScript.ttf");
@@ -60,7 +60,6 @@ function preload() {
   ubuntuBoldFont = loadFont("../fonts/UbuntuBold.ttf");
   font = ubuntuBoldFont;
 
-  //imageTest = loadImage("test.gif");
 }
 
 function setup() {
@@ -86,11 +85,11 @@ function setup() {
 
 
   createP('Ball').parent(divRow1).style("margin-left", "25px");
-  colorPicker1 = createColorPicker('#E0F1FF').parent(divRow1);
+  colorPicker1 = createColorPicker('#24B6FF').parent(divRow1);
   createP('Text').parent(divRow1).style("margin-left", "25px");
-  colorPicker2 = createColorPicker('#404040').parent(divRow1);
+  colorPicker2 = createColorPicker('#4D58FF').parent(divRow1);
   createP('Background').parent(divRow1).style("margin-left", "25px");
-  colorPicker3 = createColorPicker('#404040').parent(divRow1);
+  colorPicker3 = createColorPicker('#303030').parent(divRow1);
   ballColorCheckBox = createCheckbox("", true).parent(divRow1).style("margin-left", "40px");
   createP('Show Ball').parent(divRow1);
   constraintsCheckBox = createCheckbox("", true).parent(divRow1).style("margin-left", "20px");
@@ -125,30 +124,15 @@ function setup() {
 
 
 
-  let saveBtn = createButton("Save as Gif").parent(divRow3);
+  saveBtn = createButton("Start Recording").parent(divRow3);
+  saveBtn.id("btnSave");
   saveBtn.style("margin", "10px");
-  saveBtn.mousePressed(captureCanvas);
+  saveBtn.style("min", "10px");
+  saveBtn.mouseClicked(captureCanvas);
 
   let resetBtn = createButton("Reset").parent(divRow3);
   resetBtn.style("margin", "10px");
-  resetBtn.mousePressed(updateCradle);
-
-  // let sharetestBtn = createButton("Share").parent(divRow3);
-  // sharetestBtn.style("margin", "10px");
-  // sharetestBtn.mousePressed(function () {
-  //   FB.ui({
-  //     display: 'popup',
-  //     type: 'image',
-  //     method: 'share',
-  //     href: URL.createObjectURL(imageTest),
-  //   }, function (response) {
-  //     if (response && !response.error_message) {
-  //       alert('Posting completed.');
-  //     } else {
-  //       alert('Error while posting.');
-  //     }
-  //   });
-  // });
+  resetBtn.mouseClicked(updateCradle);
 
   texts = textInput.value();
 
@@ -275,50 +259,67 @@ function draw() {
 
   if (capturer && isCaptureCanvas == true) {
     capturer.capture(container.elt);
+    document.getElementById("btnSave").textContent = "Stop Recording";
+  }
+  else {
+    document.getElementById("btnSave").textContent = "Start Recording";
+  }
+
+  if(progress_>0){
+    document.getElementById("btnSave").textContent = "Progress "+floor((progress_*100))+"%";
   }
 }
 
 function captureCanvas() {
 
-  isCaptureCanvas = true;
-  capturer = new CCapture({
-    framerate: 120,
-    verbose: false,
-    format: 'gif',
-    workersPath: '../lib/',
-    framerate: 0,
-    autoSaveTime: 0,
-    timeLimit: 30,
-  })
-  capturer.start();
-  console.log("Recording started");
-  setTimeout(function () {
-    console.log("Recording stopped!");
-    capturer.stop();
-    saveCapture();
-    isCaptureCanvas = false;
-    //loop();
-  }, 5000);
+  if (capturer && isCaptureCanvas == true) {
+    setTimeout(function () {
+      console.log("Recording stopped!");
+      capturer.stop();
+      document.getElementById("btnSave").disabled = true;
+      saveCapture();
+      isCaptureCanvas = false;
+      //loop();
+    }, 500);
+  }
+  else {
+    isCaptureCanvas = true;
+    capturer = new CCapture({
+      framerate: 120,
+      verbose: false,
+      format: 'gif',
+      workersPath: '../lib/',
+      framerate: 0,
+      autoSaveTime: 0,
+      timeLimit: 30,
+      onProgress: function (saveProgress) {
+        progress_ = saveProgress;
+      }
+    });
+    capturer.start();
+    console.log("Recording started");
+  }
 }
 
 
 async function saveCapture() {
-  const save = await capturer.save(function (outputData) {
+  const save_ = await capturer.save(function (outputData) {
     let url = URL.createObjectURL(outputData);
-    console.log(url);
-    //let img = createImg(url.toString(), "imageTest");
-    FB.ui({
-      display: 'popup',
-      type: 'image',
-      method: 'share',
-      href: url.toString(),
-    }, function (response) {
-      if (response && !response.error_message) {
-        alert('Posting completed.');
-      } else {
-        alert('Error while posting.');
-      }
-    });
+    download(outputData, 'designTypeCradle.gif', 'image/gif');
+    progress_ = null;
+    document.getElementById("btnSave").disabled = false;
+    // FB.ui({
+    //   display: 'popup',
+    //   type: 'image',
+    //   method: 'share',
+    //   href: url.toString(),
+    // }, function (response) {
+    //   if (response && !response.error_message) {
+    //     alert('Posting completed.');
+    //   } else {
+    //     alert('Error while posting.');
+    //   }
+    // });
   });
 }
 
