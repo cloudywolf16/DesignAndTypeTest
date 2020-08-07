@@ -265,8 +265,8 @@ function draw() {
     document.getElementById("btnSave").textContent = "Start Recording";
   }
 
-  if(progress_>0){
-    document.getElementById("btnSave").textContent = "Progress "+floor((progress_*100))+"%";
+  if (progress_ > 0) {
+    document.getElementById("btnSave").textContent = "Progress " + floor((progress_ * 100)) + "%";
   }
 }
 
@@ -304,10 +304,12 @@ function captureCanvas() {
 
 async function saveCapture() {
   const save_ = await capturer.save(function (outputData) {
-    let url = URL.createObjectURL(outputData);
-    download(outputData, 'designTypeCradle.gif', 'image/gif');
     progress_ = null;
     document.getElementById("btnSave").disabled = false;
+    ModalComponent(outputData);
+    const modal = document.getElementById("myModal");
+    modal.style.display = "block";
+
     // FB.ui({
     //   display: 'popup',
     //   type: 'image',
