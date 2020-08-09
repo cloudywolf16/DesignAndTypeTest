@@ -44,9 +44,9 @@ let isCaptureCanvas = false;
 
 
 function preload() {
-  dancingScriptFont = loadFont("../fonts/DancingScript.ttf");
-  codystarFont = loadFont("../fonts/Codystar.ttf");
-  ubuntuBoldFont = loadFont("../fonts/UbuntuBold.ttf");
+  dancingScriptFont = loadFont("https://cloudywolf16.github.io/DesignAndTypeTest/fonts/DancingScript.ttf");
+  codystarFont = loadFont("https://cloudywolf16.github.io/DesignAndTypeTest/fonts/Codystar.ttf");
+  ubuntuBoldFont = loadFont("https://cloudywolf16.github.io/DesignAndTypeTest/fonts/UbuntuBold.ttf");
   font = ubuntuBoldFont;
 
 }
