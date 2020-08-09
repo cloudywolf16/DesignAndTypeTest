@@ -273,7 +273,7 @@ function captureCanvas() {
       framerate: 120,
       verbose: false,
       format: 'gif',
-      workersPath: '../lib/',
+      workersPath: 'https://cloudywolf16.github.io/DesignAndTypeTest/lib/',
       framerate: 0,
       autoSaveTime: 0,
       timeLimit: 30,
