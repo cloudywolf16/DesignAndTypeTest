@@ -1,13 +1,3 @@
-// var Engine = Matter.Engine,
-//   Render = Matter.Render,
-//   Runner = Matter.Runner,
-//   Body = Matter.Body,
-//   Composites = Matter.Composites,
-//   MouseConstraint = Matter.MouseConstraint,
-//   Mouse = Matter.Mouse,
-//   World = Matter.World;
-
-
 const { Engine, Render, Runner, World, Body, Bodies, Mouse, MouseConstraint, Constraint, Composite, Composites } = Matter;
 
 let world;
@@ -29,17 +19,16 @@ let container,
   fontSelector,
   saveBtn;
 
+let bodyBackground;
 
-let texts;
-let chars;
+
+let texts, chars;
 let dancingScriptFont,
   codystarFont,
   ubuntuBoldFont;
 let font;
 
-let engine
-let cradle;
-let cradleCount;
+let engine, cradle, cradleCount;
 
 
 let timerId;
@@ -65,73 +54,69 @@ function preload() {
 function setup() {
 
   capturer = null;
-
+  bodyBackground = select("#root");
   createCanvas(windowWidth, canvasHeight);
   frameRate(120);
   container = select('#defaultCanvas0');
 
   //--SETUP-DESIGN-OPTIONS----------------------------
-  let toolContainer = createDiv().id("div-settings");
-  let divRow1 = createDiv().id("div-row1");
-  divRow1.parent(toolContainer);
+  let settingsContainer = createDiv().id("div-settings");
+  let divSettingCol1 = createDiv().id("div-setting-column1");
+  divSettingCol1.parent(settingsContainer);
+
+  createP("Text Size").parent(divSettingCol1).style('margin','2px 5px');
+  textSizeSlider = createSlider(20, 90, 40, 1).parent(divSettingCol1).style('width', '100px').style('margin-bottom','5px');
+  createP("Ball Size").parent(divSettingCol1).style('margin','2px 5px');
+  ballSizeSlider = createSlider(10, 90, 40, 1).parent(divSettingCol1).style('width', '100px').style('margin-bottom','5px');
+  ballSizeSlider.input(updateCradle);
+  createP("Cradle Height").parent(divSettingCol1).style('margin','2px 5px');
+  cradleHeightSlider = createSlider(0, 250, 210, 1).parent(divSettingCol1).style('width', '100px').style('margin-bottom','5px');
+  cradleHeightSlider.input(updateCradle);
+  createP("Gravity Scale").parent(divSettingCol1).style('margin','2px 5px');
+  gravityScaleSlider = createSlider(0, 0.001, 0.001, 0.0001).parent(divSettingCol1).style('width', '100px').style('margin-bottom','5px');
+  gravityScaleSlider.input(setGravityScale);
 
 
-  fontSelector = createSelect().parent(divRow1);
+  let divSettingCol2 = createDiv().parent(settingsContainer).id("div-setting-column2");
+  let divCol2Text = createDiv().parent(divSettingCol2).id("div-sett-col2-text");
+  let divCol2Input = createDiv().parent(divSettingCol2).id("div-sett-col2-input");
+  createP('Ball').parent(divCol2Text);
+  colorPicker1 = createColorPicker('#24B6FF').parent(divCol2Input);
+  createP('Text').parent(divCol2Text);
+  colorPicker2 = createColorPicker('#4D58FF').parent(divCol2Input);
+  createP('Background').parent(divCol2Text);
+  colorPicker3 = createColorPicker('#303030').parent(divCol2Input);
+  ballColorCheckBox = createCheckbox("", true).parent(divCol2Input);
+  createP('Show Bead').parent(divCol2Text);
+  constraintsCheckBox = createCheckbox("", true).parent(divCol2Input);
+  createP('Show Constriants').parent(divCol2Text);
+
+
+
+  //--SETUP-INPUT---------------------------------------  
+  let divSettingCol3 = createDiv().id("div-setting-column3");
+  divSettingCol3.parent(settingsContainer);
+
+  
+  fontSelector = createSelect().parent(divSettingCol3).id("font-picker").style('margin-bottom', '10px')
+  .style('width','100%').style('font-size','11pt');
   fontSelector.option("Ubuntu Bold");
   fontSelector.option("DancingScript");
   fontSelector.option("Codystar");
   fontSelector.selected(0);
   fontSelector.changed(fontSelectEvent);
 
-
-  createP('Ball').parent(divRow1).style("margin-left", "25px");
-  colorPicker1 = createColorPicker('#24B6FF').parent(divRow1);
-  createP('Text').parent(divRow1).style("margin-left", "25px");
-  colorPicker2 = createColorPicker('#4D58FF').parent(divRow1);
-  createP('Background').parent(divRow1).style("margin-left", "25px");
-  colorPicker3 = createColorPicker('#303030').parent(divRow1);
-  ballColorCheckBox = createCheckbox("", true).parent(divRow1).style("margin-left", "40px");
-  createP('Show Ball').parent(divRow1);
-  constraintsCheckBox = createCheckbox("", true).parent(divRow1).style("margin-left", "20px");
-  createP('Show Constriants').parent(divRow1);
-
-  let divRow2 = createDiv().id("div-row2");
-  divRow2.parent(toolContainer);
-  createP("Text Size").parent(divRow2);
-  textSizeSlider = createSlider(20, 90, 40, 1).parent(divRow2);
-  textSizeSlider.style('width', '100px');
-  createP("Ball Size").parent(divRow2);
-  ballSizeSlider = createSlider(10, 90, 40, 1).parent(divRow2);
-  ballSizeSlider.style('width', '100px');
-  ballSizeSlider.input(updateCradle);
-  createP("Cradle Height").parent(divRow2);
-  cradleHeightSlider = createSlider(0, 250, 210, 1).parent(divRow2);
-  cradleHeightSlider.style('width', '100px');
-  cradleHeightSlider.input(updateCradle);
-  createP("Gravity Scale").parent(divRow2);
-  gravityScaleSlider = createSlider(0, 0.001, 0.001, 0.0001).parent(divRow2);
-  gravityScaleSlider.style('width', '100px');
-  gravityScaleSlider.input(setGravityScale);
-
-
-  //--SETUP-INPUT---------------------------------------  
-  let divRow3 = createDiv().id("div-row3");
-  divRow3.parent(toolContainer);
-  textInput = createInput('Inertia').parent(divRow3);
-  textInput.style('height', '25px');
+  textInput = createInput('Inertia').parent(divSettingCol3);
+  textInput.style('height', '25px').style('margin-bottom', '10px').style('font-size','13pt');
   textInput.input(textInputEvent);
 
 
-
-
-  saveBtn = createButton("Start Recording").parent(divRow3);
-  saveBtn.id("btnSave");
-  saveBtn.style("margin", "10px");
-  saveBtn.style("min", "10px");
+  saveBtn = createButton("Start Recording").parent(divSettingCol3).id("btnSave")
+  saveBtn.style("min", "10px").style('margin-left','auto');
   saveBtn.mouseClicked(captureCanvas);
 
-  let resetBtn = createButton("Reset").parent(divRow3);
-  resetBtn.style("margin", "10px");
+  let resetBtn = createButton("Reset").parent(divSettingCol3).style('margin-top', 'auto')
+  .style('margin-left','auto');
   resetBtn.mouseClicked(updateCradle);
 
   texts = textInput.value();
@@ -239,7 +224,7 @@ function textInputEvent() {
 
 function draw() {
   background(colorPicker3.color());
-
+  bodyBackground.style('background',colorPicker3.color());
   for (let i = 0; i < ellipses.length; i++) {
 
     let posX = cradle.bodies[i].position.x;
@@ -259,7 +244,7 @@ function draw() {
 
   if (capturer && isCaptureCanvas == true) {
     capturer.capture(container.elt);
-    document.getElementById("btnSave").textContent = "Stop Recording";
+   document.getElementById("btnSave").textContent = "Stop Recording";
   }
   else {
     document.getElementById("btnSave").textContent = "Start Recording";
@@ -307,7 +292,7 @@ async function saveCapture() {
     progress_ = null;
     document.getElementById("btnSave").disabled = false;
     ModalComponent(outputData);
-    const modal = document.getElementById("myModal");
+    const modal =  document.getElementById("myModal");
     modal.style.display = "block";
 
     // FB.ui({
