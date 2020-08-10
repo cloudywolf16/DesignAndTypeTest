@@ -66,7 +66,7 @@ function setup() {
 
   createP("Text Size").parent(divSettingCol1).style('margin','2px 5px');
   textSizeSlider = createSlider(20, 90, 40, 1).parent(divSettingCol1).style('width', '100px').style('margin-bottom','5px');
-  createP("Ball Size").parent(divSettingCol1).style('margin','2px 5px');
+  createP("Bead Size").parent(divSettingCol1).style('margin','2px 5px');
   ballSizeSlider = createSlider(10, 90, 40, 1).parent(divSettingCol1).style('width', '100px').style('margin-bottom','5px');
   ballSizeSlider.input(updateCradle);
   createP("Cradle Height").parent(divSettingCol1).style('margin','2px 5px');
