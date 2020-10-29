@@ -15,7 +15,7 @@ function preload() {
   checkOrientation();
 
   console.log(screen.orientation.angle);
-  font = loadFont("../fonts/UbuntuBold.ttf");
+  //font = loadFont("../fonts/UbuntuBold.ttf");
 }
 
 function checkOrientation() {
