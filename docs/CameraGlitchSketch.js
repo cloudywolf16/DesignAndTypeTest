@@ -11,28 +11,40 @@ let canvasDimension = { w: undefined, h: undefined };
 
 function preload() {
   console.log(window.devicePixelRatio * window.screen.width, window.devicePixelRatio * window.screen.height);
-  if (deviceOrientation=="landscape") {
-      canvasDimension.w = window.devicePixelRatio * window.screen.width,window.devicePixelRatio;
-      canvasDimension.h = window.devicePixelRatio * window.screen.height,window.devicePixelRatio;
-  }
-  else{
-    canvasDimension.w = window.devicePixelRatio * window.screen.height,window.devicePixelRatio;
-    canvasDimension.h = window.devicePixelRatio * window.screen.width,window.devicePixelRatio;
-  }
-    console.log(deviceOrientation);
-    font = loadFont("../fonts/UbuntuBold.ttf");
+  console.log(screen.width, screen.height)
+  checkOrientation();
+
+  console.log(screen.orientation.angle);
+  font = loadFont("../fonts/UbuntuBold.ttf");
 }
 
+function checkOrientation() {
+  if (screen.orientation.angle == 0 || 180) {
+    canvasDimension.w = screen.width;
+    canvasDimension.h = screen.height;
+  }
+  else {
+    canvasDimension.w = screen.height;
+    canvasDimension.h = screen.width;
+  }
+}
+
+window.onorientationchange = function (event) {
+  //console.log("the orientation of the device is now " + event.target.screen.orientation.angle);
+  noLoop();
+  checkOrientation();
+  resizeCanvas(canvasDimension.w, canvasDimension.h);
+  loop();
+};
 
 
 function setup() {
   frameRate(60);
-  createCanvas(canvasDimension.w, 720);
+  createCanvas(canvasDimension.w, canvasDimension.h);
   pixelDensity(1);
   video = createCapture(VIDEO);
   video.size(width / vScale, height / vScale);
   video.hide();
-  console.log(video);
   //textFont(font);
 }
 
@@ -61,7 +73,7 @@ function draw() {
       //--TEXTS
       fill(255);
       textSize(floor(w));
-      text("fuck", x * vScale - 15 , y * vScale  + 15);
+      text("fuck", x * vScale, y * vScale + 15);
 
 
       //--CROSS-FIX DIS
@@ -96,7 +108,3 @@ function draw() {
 //   noStroke();
 //   rect(25, 25, 50, 50);
 // }
-
-// window.onorientationchange = function(event) { 
-//   console.log("the orientation of the device is now " + event.target.screen.orientation.angle);
-// };
