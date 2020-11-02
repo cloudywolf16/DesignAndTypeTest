@@ -56,7 +56,7 @@ function setup() {
   //initInterval();
 }
 
-function initInterval(){
+function initInterval() {
   setInterval(() => {
     if (bgColor == 50) {
       bgColor = 225; strokeColor = 50;
@@ -64,15 +64,15 @@ function initInterval(){
     else if (bgColor != 50) {
       bgColor = 50; strokeColor = 250;
     }
-    
+
   }, 1500);
 }
 //--RENAME DIS PROJ TO ALUCINARI
 //
 function draw() {
- 
   background(bgColor);
-  stroke(strokeColor);
+  //stroke(strokeColor);
+  push();
   video.loadPixels();
   for (var y = 0; y < video.height; y++) {
     for (var x = 0; x < video.width; x++) {
@@ -111,15 +111,19 @@ function draw() {
       //--DIAGONAL-LINE
       //strokeWeight(w * 0.4);
       //line(x * vScale - vScale, y * vScale - vScale, x * vScale + vScale, y * vScale + vScale);
-      
+
 
       //--JAGGED-DIAGONAL-LINE
-      strokeWeight(w * 0.3); quad(x * vScale - vScale, y * vScale - vScale, x * vScale - (vScale/2), y * vScale - (vScale/1.5),  x * vScale + (vScale/2), y * vScale + (vScale/1.5), x * vScale + vScale, y * vScale + vScale);
-      
-      
+      fill(r,g,b);
+      stroke(r,g,b);
+      strokeWeight(w * 0.25); 
+      quad(x * vScale - vScale, y * vScale - vScale, x * vScale - (vScale / 2), y * vScale - (vScale / 1.5), x * vScale + (vScale / 2), y * vScale + (vScale / 1.5), x * vScale + vScale, y * vScale + vScale);
+
+
       //noLoop();
     }
   }
+  pop();
 }
 
 //--Select Pixel Color
