@@ -38,6 +38,8 @@ window.onorientationchange = function (event) {
 };
 
 
+let bgColor = 50, strokeColor = 250;
+
 function setup() {
   frameRate(60);
   createCanvas(canvasDimension.w, canvasDimension.h);
@@ -46,10 +48,31 @@ function setup() {
   video.size(width / vScale, height / vScale);
   video.hide();
   //textFont(font);
+
+  createButton("record");
+
+  background(bgColor);
+  stroke(strokeColor);
+  //initInterval();
 }
 
+function initInterval(){
+  setInterval(() => {
+    if (bgColor == 50) {
+      bgColor = 225; strokeColor = 50;
+    }
+    else if (bgColor != 50) {
+      bgColor = 50; strokeColor = 250;
+    }
+    
+  }, 1500);
+}
+//--RENAME DIS PROJ TO ALUCINARI
+//
 function draw() {
-  background(50);
+ 
+  background(bgColor);
+  stroke(strokeColor);
   video.loadPixels();
   for (var y = 0; y < video.height; y++) {
     for (var x = 0; x < video.width; x++) {
@@ -71,9 +94,9 @@ function draw() {
       //line(x * vScale, y * vScale,x * vScale + 6 , y * vScale + w);
 
       //--TEXTS
-      fill(255);
-      textSize(floor(w));
-      text("fuck", x * vScale, y * vScale + 15);
+      // fill(255);
+      // textSize(floor(w));
+      // text("fuck", x * vScale, y * vScale + 15);
 
 
       //--CROSS-FIX DIS
@@ -85,7 +108,15 @@ function draw() {
 
       //--CUBE
 
+      //--DIAGONAL-LINE
+      //strokeWeight(w * 0.4);
+      //line(x * vScale - vScale, y * vScale - vScale, x * vScale + vScale, y * vScale + vScale);
+      
 
+      //--JAGGED-DIAGONAL-LINE
+      strokeWeight(w * 0.3); quad(x * vScale - vScale, y * vScale - vScale, x * vScale - (vScale/2), y * vScale - (vScale/1.5),  x * vScale + (vScale/2), y * vScale + (vScale/1.5), x * vScale + vScale, y * vScale + vScale);
+      
+      
       //noLoop();
     }
   }
