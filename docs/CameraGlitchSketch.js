@@ -28,7 +28,7 @@ function checkOrientation() {
     canvasDimension.h = screen.width;
   }
 }
-
+ 
 window.onorientationchange = function (event) {
   //console.log("the orientation of the device is now " + event.target.screen.orientation.angle);
   noLoop();
