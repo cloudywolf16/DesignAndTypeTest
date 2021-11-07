@@ -1,6 +1,4 @@
-// Daniel Shiffman
-// https://youtu.be/rNqaw8LT2ZU
-// http://thecodingtrain.com
+
 
 var video;
 
