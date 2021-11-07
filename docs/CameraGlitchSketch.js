@@ -4,7 +4,7 @@
 
 var video;
 
-var vScale = 8;
+var vScale = 6;
 let font;
 
 let canvasDimension = { w: undefined, h: undefined };
