@@ -140,14 +140,14 @@ function draw() {
 
 
       //--ROTATING-SQUARES
-      // noStroke();
-      // push();
-      // fill(bright);
-      // translate(x * vScale - 8, y * vScale + 8);
-      // rotate(light);
-      // rectMode(CENTER);
-      // rect(0,0, vScale*0.75);
-      // pop();
+       noStroke();
+       push();
+       fill(bright);
+       translate(x * vScale - 8, y * vScale + 8);
+       rotate(light);
+       rectMode(CENTER);
+       rect(0,0, vScale*0.75);
+       pop();
 
       //--RANDOM-LETTERS
       // let chars = "ABCDEF00000000011111111";
@@ -170,6 +170,7 @@ function draw() {
       // triangle(x * vScale + (vScale*0.25), y * vScale + vScale, x * vScale + (vScale/2), y * vScale + (vScale*0.5), x * vScale + (vScale*0.75), y * vScale + vScale)
       // pop();
 
+ /*
       fill(255);
       stroke(255);
       //fill(r,g,b);
@@ -221,7 +222,7 @@ function draw() {
         bezier(vScale * 0.75, vScale * 0.25, p3x, p3y, p4x, p4y, vScale * 0.25, vScale * 0.75);
       }
 
-      pop();
+      pop();*/
 
       //noLoop();
     }
