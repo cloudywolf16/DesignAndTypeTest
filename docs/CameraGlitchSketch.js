@@ -2,7 +2,7 @@
 
 var video;
 
-var vScale = 16;
+var vScale = 8;
 let font;
 
 let canvasDimension = { w: undefined, h: undefined };
@@ -150,12 +150,12 @@ function draw() {
       // pop();
 
       //--RANDOM-LETTERS
-       let chars = "ABCDEF00000000011111111";
-       colorMode(HSB,358,100,100);
-       fill(114,100,light);
-       stroke(114,100,light);
-       let letter = chars.charAt(Math.floor(Math.random() * chars.length));
-       text(letter, x * vScale, y * vScale + 12);
+      // let chars = "ABCDEF00000000011111111";
+      // colorMode(HSB,358,100,100);
+      // fill(114,100,light);
+      // stroke(114,100,light);
+      // let letter = chars.charAt(Math.floor(Math.random() * chars.length));
+      // text(letter, x * vScale, y * vScale + 12);
 
       //--TRIANGLE
 
@@ -170,7 +170,7 @@ function draw() {
       // triangle(x * vScale + (vScale*0.25), y * vScale + vScale, x * vScale + (vScale/2), y * vScale + (vScale*0.5), x * vScale + (vScale*0.75), y * vScale + vScale)
       // pop();
 
- /*
+ 
       fill(255);
       stroke(255);
       //fill(r,g,b);
@@ -222,7 +222,7 @@ function draw() {
         bezier(vScale * 0.75, vScale * 0.25, p3x, p3y, p4x, p4y, vScale * 0.25, vScale * 0.75);
       }
 
-      pop();*/
+      pop();
 
       //noLoop();
     }
