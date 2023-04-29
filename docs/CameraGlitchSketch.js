@@ -140,22 +140,22 @@ function draw() {
 
 
       //--ROTATING-SQUARES
-       noStroke();
-       push();
-       fill(bright);
-       translate(x * vScale - 8, y * vScale + 8);
-       rotate(light);
-       rectMode(CENTER);
-       rect(0,0, vScale*0.75);
-       pop();
+      // noStroke();
+      // push();
+      // fill(bright);
+      // translate(x * vScale - 8, y * vScale + 8);
+      // rotate(light);
+      // rectMode(CENTER);
+      // rect(0,0, vScale*0.75);
+      // pop();
 
       //--RANDOM-LETTERS
-      // let chars = "ABCDEF00000000011111111";
-      // colorMode(HSB,358,100,100);
-      // fill(114,100,light);
-      // stroke(114,100,light);
-      // let letter = chars.charAt(Math.floor(Math.random() * chars.length));
-      // text(letter, x * vScale, y * vScale + 12);
+       let chars = "ABCDEF00000000011111111";
+       colorMode(HSB,358,100,100);
+       fill(114,100,light);
+       stroke(114,100,light);
+       let letter = chars.charAt(Math.floor(Math.random() * chars.length));
+       text(letter, x * vScale, y * vScale + 12);
 
       //--TRIANGLE
 
